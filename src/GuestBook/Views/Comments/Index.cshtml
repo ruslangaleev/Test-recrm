@@ -1,0 +1,54 @@
+﻿@model IEnumerable<GuestBook.Services.ViewModels.CommentViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table" id="comments">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.)*@
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CommentId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CommentId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CommentId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@*<script type="text/javascript">
+    $(document).load(function () {
+        $.getJSON('comments', null, function (data) {
+            $.each(data, function (index, element) {
+                $('#comments').append($('<div>', {
+                    text: element.description
+                }));
+            });
+        });
+    });
+</script>*@

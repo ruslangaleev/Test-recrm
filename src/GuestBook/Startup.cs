@@ -17,6 +17,8 @@ using GuestBook.Data.Repositories.Logic;
 using GuestBook.Data.Infrastructure.Logic;
 using GuestBook.Data.Infrastructure.Interfaces;
 using System.Reflection;
+using GuestBook.Services.Interfaces;
+using GuestBook.Services.Logic;
 
 namespace GuestBook
 {
@@ -61,6 +63,8 @@ namespace GuestBook
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IStorage, ApplicationDbContext>();
             services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<ICommentManager, CommentManager>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddMvc();
         }
