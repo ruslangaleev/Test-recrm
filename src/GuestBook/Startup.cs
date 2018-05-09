@@ -14,6 +14,9 @@ using GuestBook.Services;
 using GuestBook.Data.Infrastructure;
 using GuestBook.Data.Repositories.Interfaces;
 using GuestBook.Data.Repositories.Logic;
+using GuestBook.Data.Infrastructure.Logic;
+using GuestBook.Data.Infrastructure.Interfaces;
+using System.Reflection;
 
 namespace GuestBook
 {
@@ -29,11 +32,29 @@ namespace GuestBook
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            var dbConnectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddEntityFrameworkSqlServer()
+                .AddDbContext<ApplicationDbContext>(options =>
+                {
+                    options.UseSqlServer(dbConnectionString,
+                        sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                            sqlOptions.EnableRetryOnFailure(
+                                maxRetryCount: 5,
+                                maxRetryDelay: TimeSpan.FromSeconds(30),
+                                errorNumbersToAdd: null);
+                        });
+                },
+                ServiceLifetime.Scoped
+            );
+
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddEntityFrameworkStores<
+                    ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             // Add application services.
