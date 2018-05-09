@@ -12,7 +12,7 @@ namespace GuestBook.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Comments");
         }
 
         public IActionResult About()
