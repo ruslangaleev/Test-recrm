@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace GuestBook.Controllers
 {
     [Authorize]
-    //[Route("comments")]
+    [Route("comments")]
     public class CommentsController : Controller
     {
         private readonly ICommentManager _commentManager;
@@ -58,30 +58,37 @@ namespace GuestBook.Controllers
         //}
 
         // GET: Comments/Create
-        public IActionResult Create()
-        {
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            //return View();
-            return View();
-        }
+        //public IActionResult Create()
+        //{
+        //    //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+        //    //return View();
+        //    return View();
+        //}
 
         // POST: Comments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentId,Description,UserId")]AddCommentModel comment)
+        //[ValidateAntiForgeryToken]
+        public async Task<object> Create(AddCommentModel comment)
         {
+            var user = await GetCurrentUser();
+
             if (ModelState.IsValid)
             {
-                var user = await GetCurrentUser();
                 comment.AuthorId = user.Id;
                 await _commentManager.AddComment(comment);
 
-                return RedirectToAction(nameof(Index));
+                return new CommentViewModel
+                {
+                    Description = comment.Description,
+                    FullName = user.FullName
+                };
             }
             //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", comment.UserId);
-            return View(comment);
+            //return View(comment);
+
+            return BadRequest();
         }
 
         private async Task<ApplicationUser> GetCurrentUser()
