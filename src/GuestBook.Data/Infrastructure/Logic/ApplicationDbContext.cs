@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using GuestBook.Models;
+using GuestBook.Data.Infrastructure.Interfaces;
 
-namespace GuestBook.Data
+namespace GuestBook.Data.Infrastructure.Logic
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IStorage
     {
+        public DbSet<Comment> Comments { get; set; }
+
+        public DbSet<EvaluationComment> EvaluationComments { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

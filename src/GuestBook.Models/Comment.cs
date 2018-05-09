@@ -2,6 +2,8 @@
 {
     public class Comment
     {
+        public string CommentId { get; set; }
+
         /// <summary>
         /// Описание комментария
         /// </summary>

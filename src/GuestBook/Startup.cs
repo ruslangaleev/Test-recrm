@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using GuestBook.Data;
 using GuestBook.Models;
 using GuestBook.Services;
+using GuestBook.Data.Infrastructure;
+using GuestBook.Data.Repositories.Interfaces;
+using GuestBook.Data.Repositories.Logic;
 
 namespace GuestBook
 {
@@ -35,6 +38,8 @@ namespace GuestBook
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<IStorage, ApplicationDbContext>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
 
             services.AddMvc();
         }

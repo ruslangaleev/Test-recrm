@@ -5,6 +5,8 @@
     /// </summary>
     public class EvaluationComment
     {
+        public string EvaluationCommentId { get; set; }
+
         public virtual Comment Comment { get; set; }
 
         public string CommentId { get; set; }
