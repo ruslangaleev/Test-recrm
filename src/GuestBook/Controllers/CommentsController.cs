@@ -35,6 +35,7 @@ namespace GuestBook.Controllers
         {
             //return _commentManager.GetComments();
             var comments = await _commentManager.GetComments();
+            ViewData["AddCommentModel"] = new AddCommentModel();
             return View(comments);
         }
 
