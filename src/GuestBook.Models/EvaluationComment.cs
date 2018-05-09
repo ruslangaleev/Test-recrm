@@ -18,6 +18,6 @@
         /// <summary>
         /// Оценка комментария. False - Дизлайк. True - Лайк
         /// </summary>
-        public bool Evaluation { get; set; }
+        public bool IsPlus { get; set; }
     }
 }

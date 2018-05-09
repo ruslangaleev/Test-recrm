@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
-using GuestBook.Data.Infrastructure;
 using GuestBook.Data.Repositories.Interfaces;
 using GuestBook.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using GuestBook.Data.Infrastructure.Interfaces;
+using GuestBook.Data.Infrastructure.Logic;
+using System.Collections.Generic;
 
 namespace GuestBook.Data.Repositories.Logic
 {
@@ -47,6 +49,17 @@ namespace GuestBook.Data.Repositories.Logic
             await _evaluationComments.AddAsync(evaluation);
         }
 
+        public async Task<IEnumerable<Comment>> GetComments()
+        {
+            return await _comments.Include(t => t.User).ToListAsync();
+        }
+
+        public async Task<EvaluationComment> GetEvaluation(string commentId, string userId)
+        {
+            return await _evaluationComments
+                .FirstOrDefaultAsync(t => t.CommentId == commentId && t.UserId == userId);
+        }
+
         /// <summary>
         /// Удаляет оценку к комментарию
         /// </summary>
@@ -57,6 +70,14 @@ namespace GuestBook.Data.Repositories.Logic
             {
                 _evaluationComments.Remove(entry);
             }
+        }
+
+        public async Task UpdateEvaluation(EvaluationComment evaluation)
+        {
+            await Task.Run(() =>
+            {
+                _evaluationComments.Update(evaluation);
+            });
         }
     }
 }
