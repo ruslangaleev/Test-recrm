@@ -5,41 +5,28 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<div class="row text-center">
+    <h1>Гостевая книга</h1>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table" id="comments">
-    <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.)*@
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CommentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CommentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CommentId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <h2>@item.FullName</h2>
+        <br />
+        @item.Description
+    }
+</div>
+
+<div class="form-group">
+    <label for="fullName">Ваше имя:</label>
+    <input type="text" class="form-control" id="fullName">
+    <br />
+    <label for="comment">Отзыв:</label>
+    <textarea class="form-control" rows="5" id="comment"></textarea>
+    <br />
+    <button type="button" class="btn btn-default center-block" asp-action="Create">Оставить отзыв</button>
+</div>
 
 @*<script type="text/javascript">
     $(document).load(function () {

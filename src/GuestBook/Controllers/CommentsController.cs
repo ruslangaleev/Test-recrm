@@ -8,21 +8,29 @@ using Microsoft.EntityFrameworkCore;
 using GuestBook.Data.Infrastructure.Logic;
 using GuestBook.Models;
 using GuestBook.Services.Interfaces;
+using GuestBook.Services.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GuestBook.Controllers
 {
-    [Route("comments")]
+    [Authorize]
+    //[Route("comments")]
     public class CommentsController : Controller
     {
         private readonly ICommentManager _commentManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CommentsController(ICommentManager commentManager)
+        public CommentsController(ICommentManager commentManager,
+            UserManager<ApplicationUser> userManager)
         {
             _commentManager = commentManager;
+            _userManager = userManager;
         }
 
         // GET: Comments
         //[HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             //return _commentManager.GetComments();
@@ -49,29 +57,40 @@ namespace GuestBook.Controllers
         //    return View(comment);
         //}
 
-        //// GET: Comments/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-        //    return View();
-        //}
+        // GET: Comments/Create
+        public IActionResult Create()
+        {
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            //return View();
+            return View();
+        }
 
-        //// POST: Comments/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("CommentId,Description,UserId")] Comment comment)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(comment);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", comment.UserId);
-        //    return View(comment);
-        //}
+        // POST: Comments/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("CommentId,Description,UserId")]AddCommentModel comment)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await GetCurrentUser();
+                comment.AuthorId = user.Id;
+                await _commentManager.AddComment(comment);
+
+                return RedirectToAction(nameof(Index));
+            }
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", comment.UserId);
+            return View(comment);
+        }
+
+        private async Task<ApplicationUser> GetCurrentUser()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User) ??
+                await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
+
+            return user;
+        }
 
         //// GET: Comments/Edit/5
         //public async Task<IActionResult> Edit(string id)
