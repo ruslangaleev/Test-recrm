@@ -43,7 +43,6 @@ namespace GuestBook.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<object> Create(AddCommentModel comment)
         {
             var user = await GetCurrentUser();
@@ -59,8 +58,6 @@ namespace GuestBook.Controllers
                     FullName = user.FullName
                 };
             }
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", comment.UserId);
-            //return View(comment);
 
             return BadRequest();
         }

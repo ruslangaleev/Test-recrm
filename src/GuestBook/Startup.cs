@@ -19,6 +19,8 @@ using GuestBook.Data.Infrastructure.Interfaces;
 using System.Reflection;
 using GuestBook.Services.Interfaces;
 using GuestBook.Services.Logic;
+using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace GuestBook
 {
@@ -58,6 +60,15 @@ namespace GuestBook
                 .AddEntityFrameworkStores<
                     ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Events.OnRedirectToLogin = async context =>
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    await context.Response.WriteAsync("Необходимо авторизоваться");
+                };
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
